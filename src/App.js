@@ -7,13 +7,14 @@ class App extends React.Component {
       newItem: "", 
       list: [
         {
-          id: 1, value: 'Im a dummie', isChecked: false }, 
+          id: 1, value: 'Im a dummie', isChecked: false, editMode: false }, 
         {
-          id: 2, value: 'Im a dummie too', isChecked: true
+          id: 2, value: 'Im a dummie too', isChecked: true, editMode: false
         }
       ], 
       chekk: false, 
-      edit: "" 
+      edit: "",  
+      editMode: false
     } 
   } 
 
@@ -29,7 +30,8 @@ class App extends React.Component {
     const newItem = {
       id: 1 + Math.random(), 
       value: this.state.newItem.slice(), 
-      isChecked: false
+      isChecked: false, 
+      editMode: false
     }; 
 
     //copy of current list of items 
@@ -51,6 +53,7 @@ class App extends React.Component {
     const updatedList = list.map(item => {
       if (item.id === e.id){
         e.value = this.state.edit; 
+        item.editMode = !item.editMode; 
       }
       return item 
     });
@@ -84,17 +87,25 @@ class App extends React.Component {
   }
 
   render () {
-
-    console.log(this.state.list)
+    // const editField = 
+    //   (<input 
+    //     type = "text" 
+    //     placeholder = "edit item"
+    //     value = {this.state.edit}
+    //     onChange = {e => this.updateInput("edit", e.target.value)}
+    //   />); 
+      
+    console.log(this.state.list); 
+    // console.log(editField); 
     
     return (
       <div>
         <div>
-          Add an item... 
-          <br/>
+          Add your todo
+          <br />
           <input 
             type="text"
-            placeholder="Tell your idea here"
+            placeholder="What you need to do?"
             value={this.state.newItem}
             // event have an event that will call function every time it is activated
             onChange={e => this.updateInput("newItem", e.target.value)}
@@ -102,7 +113,7 @@ class App extends React.Component {
           <button // call a function every time btn is clicked 
             onClick={() => this.addItem()}
           >
-            Add it to the list 
+            Add to list 
           </button> 
         
           <ul>
@@ -113,30 +124,34 @@ class App extends React.Component {
                   <input 
                     type="checkbox"
                     defaultChecked={item.isChecked}
-                    // checked = {this.state.isChecked}
                     onClick = {() => this.checkDone(item)}
-                  />
-                  {item.value}
+                  /> 
+
+                  {item.value}  
+                  {/* {this.state.editMode === false ? (
+                    (item.value) 
+                  ) : ( 
+                    // {editField}
+                  )} */}
                   <input 
-                    type="text" 
-                    placeholder="edit item"
-                    value={this.state.edit}
-                    onChange={e => this.updateInput("edit", e.target.value)}
+                    type = "text" 
+                    placeholder = "edit item"
+                    value = {this.state.edit}
+                    onChange = {e => this.updateInput("edit", e.target.value)}
                   />
-                  <button
-                    onClick = {() => this.editItem(item)}
-                  >
+
+                  <br/>
+                  <button onClick = {() => this.editItem(item)}>
                     Edit  
                   </button>
 
-                  <button
-                    onClick={() => this.deleteItem(item.id)}
-                  >
+                  <button onClick={() => this.deleteItem(item.id)}>
                     Remove
                   </button>
                 </li>
               )
             })}
+
           </ul>
         </div>
       </div>
