@@ -9,10 +9,9 @@ class App extends React.Component {
         {
           id: 1, value: 'Im a dummie', isChecked: false, editMode: false }, 
         {
-          id: 2, value: 'Im a dummie too', isChecked: true, editMode: false
+          id: 2, value: 'Im a dummie too', isChecked: false, editMode: false
         }
       ], 
-      chekk: false, 
       edit: "",  
       editMode: false
     } 
@@ -21,7 +20,7 @@ class App extends React.Component {
   updateInput(key, value) {
     //update react state 
     this.setState({
-      [key]: value
+      [key]: value //blir inte unikt om samma handla 
     }); 
   }
 
@@ -47,13 +46,23 @@ class App extends React.Component {
     }); 
   }
   
-  editItem(e) {
+  /* setUpdate(thetext, thekey){
+        const updateList = this.state.todoList
+        updateList.map(item => {
+            if(item.key === thekey) {
+                item.text = thetext
+            } 
+    })
+  */
+  editItem(event) {
+    console.log(event.id); 
     const list = [...this.state.list];
     
     const updatedList = list.map(item => {
-      if (item.id === e.id){
-        e.value = this.state.edit; 
-        item.editMode = !item.editMode; 
+      if (item.id === event.id){
+        item.value = event.value
+        // event.value = this.state.edit; 
+        // item.editMode = !item.editMode; 
       }
       return item 
     });
@@ -63,13 +72,12 @@ class App extends React.Component {
       list: updatedList}); 
   } 
 
-  checkDone(c) {
+  checkDone(event) {
     const list = [...this.state.list]; 
     
-    const updatedList = list.map(item => {
-      if (item.id === c.id) {
+    const updatedList = list.map(item => { 
+      if (item.id === event.id) {
         item.isChecked = !item.isChecked;
-        this.setState({chekk: true})
       }
       return item
     }); 
@@ -87,19 +95,10 @@ class App extends React.Component {
   }
 
   render () {
-    // const editField = 
-    //   (<input 
-    //     type = "text" 
-    //     placeholder = "edit item"
-    //     value = {this.state.edit}
-    //     onChange = {e => this.updateInput("edit", e.target.value)}
-    //   />); 
-      
     console.log(this.state.list); 
-    // console.log(editField); 
-    
     return (
       <div>
+
         <div>
           Add your todo
           <br />
@@ -110,53 +109,56 @@ class App extends React.Component {
             // event have an event that will call function every time it is activated
             onChange={e => this.updateInput("newItem", e.target.value)}
           /> 
-          <button // call a function every time btn is clicked 
-            onClick={() => this.addItem()}
-          >
-            Add to list 
-          </button> 
-        
-          <ul>
-            {this.state.list.map(item => {
-              return (
-                //with map each li must have a unique id
-                <li key={item.id}>                  
-                  <input 
-                    type="checkbox"
-                    defaultChecked={item.isChecked}
-                    onClick = {() => this.checkDone(item)}
-                  /> 
-
-                  {item.value}  
-                  {/* {this.state.editMode === false ? (
-                    (item.value) 
-                  ) : ( 
-                    // {editField}
-                  )} */}
-                  <input 
-                    type = "text" 
-                    placeholder = "edit item"
-                    value = {this.state.edit}
-                    onChange = {e => this.updateInput("edit", e.target.value)}
-                  />
-
-                  <br/>
-                  <button onClick = {() => this.editItem(item)}>
-                    Edit  
-                  </button>
-
-                  <button onClick={() => this.deleteItem(item.id)}>
-                    Remove
-                  </button>
-                </li>
-              )
-            })}
-
-          </ul>
+          {/* call a function every time btn is clicked  */}
+          <button onClick={() => this.addItem()}>Add to list </button> 
         </div>
+
+          {/* with map each <p> item gets an unique id from key  */}
+          {this.state.list.map(item => { 
+            return (
+              <p key={item.id}> 
+                <input 
+                  type = "checkbox" 
+                  defaultChecked={item.isChecked}
+                  onClick={() => this.checkDone(item)} 
+                  />
+                <input 
+                  type="text"
+                  value={item.value} 
+                  onChange = {(event) => {this.editItem(event.target.value, item.key)}}
+                />
+                <button onClick={() => this.deleteItem(item.id)}>Remove</button>
+                {item.value}  
+                <button onClick = {() => this.editItem(item)}>Edit </button>
+              </p> 
+            )
+          })}
       </div>
-    );
+    ); 
   }
 }
-
 export default App;
+
+/* 
+<ul>
+  {this.state.list.map(item => {
+    return (
+      //with map each li must have a unique id
+      <li key={item.id}>                  
+        <input 
+          type="checkbox"
+          defaultChecked={item.isChecked}
+          onClick = {() => this.checkDone(item)}
+        /> 
+        {item.value}  
+        <input 
+          type = "text" 
+          placeholder = "edit item"
+          value = {this.state.value}
+          onChange = {e => this.updateInput("edit", e.target.value)}
+        />
+        </li>
+    )
+  })}
+  </ul>
+*/
